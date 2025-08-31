@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Model Catalogue</title>
+
+  <!-- Google Model Viewer -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #1f1f1f, #2e2e2e);
+      margin: 0;
+      padding: 30px;
+      color: #fff;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+      font-weight: 600;
+      font-size: 2rem;
+    }
+
+    /* Catalogue grid */
+    .catalogue {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background: #2b2b2b;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    .card model-viewer {
+      width: 100%;
+      height: 220px;
+      background: #111;
+    }
+
+    .card-title {
+      padding: 15px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 500;
+      color: #f1f1f1;
+    }
+
+    /* Modal overlay */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .overlay-content {
+      background: #1f1f1f;
+      border-radius: 18px;
+      padding: 20px;
+      max-width: 95%;
+      max-height: 95%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 6px 25px rgba(0,0,0,0.5);
+    }
+
+    .overlay-content h2 {
+      color: #fff;
+      margin-bottom: 15px;
+    }
+
+    model-viewer#viewer {
+      width: 85vw;
+      height: 75vh;
+      border-radius: 12px;
+      background: #111;
+    }
+
+    .close-btn {
+      margin-top: 15px;
+      padding: 10px 22px;
+      border: none;
+      background: #e74c3c;
+      color: #fff;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      transition: background 0.2s ease;
+    }
+
+    .close-btn:hover {
+      background: #c0392b;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>3D Model Catalogue</h1>
+
+  <div class="catalogue" id="catalogue"></div>
+
+  <!-- Overlay -->
+  <div id="overlay" class="overlay" onclick="closeOverlay(event)">
+    <div class="overlay-content">
+      <h2 id="model-title"></h2>
+      <model-viewer id="viewer" 
+        camera-controls 
+        auto-rotate 
+        shadow-intensity="1"
+        exposure="1.2"
+        environment-image="neutral"
+        ar>
+      </model-viewer>
+      <button class="close-btn" onclick="closeOverlay()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    // List of models
+    const models = [
+      {src: "BoltForConnectingPlate.glb", title: "Model 1"},
+      {src: "Clamp.glb", title: "Model 2"},
+      {src: "ConnectingPlate.glb", title: "Model 3"},
+      {src: "file.glb", title: "Model 4"},
+      {src: "FinalAssem.glb", title: "Model 5"},
+      {src: "NutForConnectingPlate.glb", title: "Model 6"},
+      {src: "Part1.glb", title: "Model 7"},
+      {src: "PlateRod.glb", title: "Model 8"},
+      {src: "plate.glb", title: "Model 9"},
+      {src: "Separator.glb", title: "Model 10"},
+      {src: "TopFrame.glb", title: "Model 11"},
+      {src: "TractorConnectingPlat.glb", title: "Model 12"},
+      {src: "UBoltNut.glb", title: "Model 13"}
+    ];
+
+    // Generate catalogue dynamically
+    const catalogue = document.getElementById("catalogue");
+    models.forEach(model => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <model-viewer src="${model.src}" disable-zoom camera-controls></model-viewer>
+        <div class="card-title">${model.title}</div>
+      `;
+      card.onclick = () => openModel(model.src, model.title);
+      catalogue.appendChild(card);
+    });
+
+    // Modal controls
+    function openModel(src, title) {
+      document.getElementById('viewer').setAttribute('src', src);
+      document.getElementById('model-title').innerText = title;
+      document.getElementById('overlay').style.display = 'flex';
+    }
+
+    function closeOverlay(event) {
+      if (event && event.target.id === "overlay") {
+        document.getElementById('overlay').style.display = 'none';
+      } else if (!event) {
+        document.getElementById('overlay').style.display = 'none';
+      }
+    }
+  </script>
+
+</body>
+</html>
